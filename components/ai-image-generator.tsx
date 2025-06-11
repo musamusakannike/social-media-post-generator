@@ -72,23 +72,23 @@ export default function AIImageGenerator({ type, onImageGenerated, textContent }
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white dark:bg-slate-900 border dark:border-slate-700">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
           <Wand2 className="h-5 w-5 text-purple-500" />
           Generate AI {type === "content" ? "Content" : "Background"} Image
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Alert>
+        <Alert className="dark:bg-slate-800/50 dark:border-slate-700">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="dark:text-slate-300">
             You need a Google AI Studio API key to generate images. Get one at{" "}
             <a
               href="https://aistudio.google.com/app/apikey"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
             >
               aistudio.google.com
             </a>
@@ -96,7 +96,7 @@ export default function AIImageGenerator({ type, onImageGenerated, textContent }
         </Alert>
 
         <div className="space-y-2">
-          <Label htmlFor="apiKey" className="flex items-center gap-2">
+          <Label htmlFor="apiKey" className="flex items-center gap-2 dark:text-slate-100">
             <Key className="h-4 w-4" />
             Gemini API Key
           </Label>
@@ -113,7 +113,9 @@ export default function AIImageGenerator({ type, onImageGenerated, textContent }
         <Separator />
 
         <div className="space-y-2">
-          <Label htmlFor="customPrompt">Custom Prompt (Optional)</Label>
+          <Label htmlFor="customPrompt" className="dark:text-slate-100">
+            Custom Prompt (Optional)
+          </Label>
           <Textarea
             id="customPrompt"
             value={customPrompt}
@@ -121,7 +123,7 @@ export default function AIImageGenerator({ type, onImageGenerated, textContent }
             placeholder={generateDefaultPrompt()}
             className="h-24 resize-none"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground dark:text-slate-300">
             Leave empty to use an auto-generated prompt based on your text content.
           </p>
         </div>
@@ -136,7 +138,7 @@ export default function AIImageGenerator({ type, onImageGenerated, textContent }
         <Button
           onClick={handleGenerate}
           disabled={isGenerating || !apiKey.trim()}
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
         >
           {isGenerating ? (
             <>
