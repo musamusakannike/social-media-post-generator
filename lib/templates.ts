@@ -18,6 +18,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
     },
   },
   {
@@ -39,6 +44,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
     },
   },
   {
@@ -60,6 +70,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
     },
   },
   {
@@ -81,6 +96,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: false,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "light",
     },
   },
   {
@@ -102,6 +122,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
     },
   },
   {
@@ -123,6 +148,11 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
     },
   },
   {
@@ -144,6 +174,46 @@ export const templates = [
       imagePosition: "above",
       showContentImage: false,
       showThreadText: true,
+      codeBlock: "",
+      codeLanguage: "javascript",
+      codePosition: "above",
+      showCodeBlock: false,
+      codeTheme: "dark",
+    },
+  },
+  {
+    id: "code-focused",
+    name: "Code Focus",
+    config: {
+      text: "Clean Code Principles Every Developer Should Follow",
+      threadText: "Code tips 💻",
+      username: "@musa_codes",
+      backgroundColor: "#0d1117",
+      backgroundImage: "",
+      textColor: "#f0f6fc",
+      fontSize: 28,
+      threadFontSize: 18,
+      fontFamily: "monospace",
+      fontWeight: "bold",
+      contentImage: "",
+      contentImageSize: 200,
+      imagePosition: "above",
+      showContentImage: false,
+      showThreadText: true,
+      codeBlock: `function cleanCode() {
+  // Write self-documenting code
+  const isUserValid = checkUserPermissions();
+  
+  if (isUserValid) {
+    return processUserRequest();
+  }
+  
+  throw new Error('Invalid user');
+}`,
+      codeLanguage: "javascript",
+      codePosition: "below",
+      showCodeBlock: true,
+      codeTheme: "dark",
     },
   },
 ]

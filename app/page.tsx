@@ -20,6 +20,8 @@ import {
   ArrowDown,
   RotateCcw,
   Sparkles,
+  Bot,
+  Code,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -34,6 +36,7 @@ import dynamic from "next/dynamic"
 import { templates } from "@/lib/templates"
 import { cn } from "@/lib/utils"
 import ColorPicker from "@/components/color-picker"
+import AIImageGenerator from "@/components/ai-image-generator"
 
 // Dynamically import EmojiPicker to avoid SSR issues
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
@@ -59,10 +62,18 @@ export default function Home() {
     imagePosition: "above", // "above" or "below"
     showContentImage: false,
     showThreadText: true,
+    // Add code block properties
+    codeBlock: "",
+    codeLanguage: "javascript",
+    codePosition: "above", // "above" or "below"
+    showCodeBlock: false,
+    codeTheme: "dark", // "dark" or "light"
   })
 
   const [activeTemplate, setActiveTemplate] = useState("default")
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showAIContentGenerator, setShowAIContentGenerator] = useState(false)
+  const [showAIBackgroundGenerator, setShowAIBackgroundGenerator] = useState(false)
   const imageRef = useRef<HTMLDivElement>(null)
 
   // Apply template with animation
@@ -115,6 +126,24 @@ export default function Home() {
     }
   }
 
+  // Handle AI generated images
+  const handleAIImageGenerated = (imageDataUrl: string, type: "content" | "background") => {
+    if (type === "content") {
+      setPostConfig({
+        ...postConfig,
+        contentImage: imageDataUrl,
+        showContentImage: true,
+      })
+      setShowAIContentGenerator(false)
+    } else {
+      setPostConfig({
+        ...postConfig,
+        backgroundImage: imageDataUrl,
+      })
+      setShowAIBackgroundGenerator(false)
+    }
+  }
+
   // Download image with loading state
   const downloadImage = async () => {
     if (imageRef.current) {
@@ -158,6 +187,15 @@ export default function Home() {
     })
   }
 
+  // Add clear code block function
+  const clearCodeBlock = () => {
+    setPostConfig({
+      ...postConfig,
+      codeBlock: "",
+      showCodeBlock: false,
+    })
+  }
+
   // Reset to default
   const resetToDefault = () => {
     const defaultTemplate = templates.find((t) => t.id === "default")
@@ -177,7 +215,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             Social Media Post Generator
           </h1>
-          <p className="text-muted-foreground">Create stunning social media posts with ease</p>
+          <p className="text-muted-foreground">Create stunning social media posts with AI-powered images</p>
         </div>
 
         <div className="grid lg:grid-cols-[1fr_500px] gap-8">
@@ -312,84 +350,274 @@ export default function Home() {
 
                     <div className="space-y-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="contentImage" className="text-sm font-medium">
-                          Content Image (Optional)
-                        </Label>
-                        {postConfig.contentImage && (
+                        <Label className="text-sm font-medium">Content Type</Label>
+                        <div className="flex gap-2">
                           <Button
-                            variant="ghost"
+                            variant={!postConfig.showCodeBlock && !postConfig.showContentImage ? "default" : "outline"}
                             size="sm"
-                            onClick={clearContentImage}
-                            className="hover:bg-red-50 hover:text-red-600"
+                            onClick={() => {
+                              setPostConfig({
+                                ...postConfig,
+                                showCodeBlock: false,
+                                showContentImage: false,
+                                codeBlock: "",
+                                contentImage: "",
+                              })
+                            }}
                           >
-                            <X className="h-4 w-4 mr-2" /> Clear
+                            Text Only
                           </Button>
-                        )}
+                          <Button
+                            variant={postConfig.showContentImage ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              setPostConfig({
+                                ...postConfig,
+                                showCodeBlock: false,
+                                showContentImage: true,
+                                codeBlock: "",
+                              })
+                            }}
+                          >
+                            <ImageIcon className="h-4 w-4 mr-2" />
+                            Image
+                          </Button>
+                          <Button
+                            variant={postConfig.showCodeBlock ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              setPostConfig({
+                                ...postConfig,
+                                showContentImage: false,
+                                showCodeBlock: true,
+                                contentImage: "",
+                              })
+                            }}
+                          >
+                            <Code className="h-4 w-4 mr-2" />
+                            Code
+                          </Button>
+                        </div>
                       </div>
 
-                      <Input
-                        id="contentImage"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(e, "content")}
-                        className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      />
-
-                      {postConfig.contentImage && (
+                      {/* Image Content Section */}
+                      {postConfig.showContentImage && (
                         <div className="space-y-4 animate-in fade-in duration-500">
-                          <div
-                            className="relative w-full bg-muted rounded-lg overflow-hidden"
-                            style={{ height: `${postConfig.contentImageSize}px` }}
-                          >
-                            <Image
-                              src={postConfig.contentImage || "/placeholder.svg"}
-                              alt="Content preview"
-                              fill
-                              className="object-contain"
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="contentImage" className="text-sm font-medium">
+                              Content Image
+                            </Label>
+                            {postConfig.contentImage && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearContentImage}
+                                className="hover:bg-red-50 hover:text-red-600"
+                              >
+                                <X className="h-4 w-4 mr-2" /> Clear
+                              </Button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              id="contentImage"
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, "content")}
+                              className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                             />
+                            <Button
+                              variant="outline"
+                              onClick={() => setShowAIContentGenerator(true)}
+                              className="hover:bg-purple-50 hover:border-purple-300"
+                            >
+                              <Bot className="h-4 w-4 mr-2" />
+                              Generate with AI
+                            </Button>
+                          </div>
+
+                          {postConfig.contentImage && (
+                            <div className="space-y-4">
+                              <div
+                                className="relative w-full bg-muted rounded-lg overflow-hidden"
+                                style={{ height: `${postConfig.contentImageSize}px` }}
+                              >
+                                <Image
+                                  src={postConfig.contentImage || "/placeholder.svg"}
+                                  alt="Content preview"
+                                  fill
+                                  className="object-contain"
+                                />
+                              </div>
+
+                              <div className="space-y-3">
+                                <div>
+                                  <Label className="text-sm font-medium">Image Size</Label>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <Slider
+                                      min={100}
+                                      max={400}
+                                      step={10}
+                                      value={[postConfig.contentImageSize]}
+                                      onValueChange={(value) => updateConfig("contentImageSize", value[0])}
+                                      className="flex-1"
+                                    />
+                                    <span className="w-16 text-center text-sm font-mono">
+                                      {postConfig.contentImageSize}px
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <Label className="text-sm font-medium">Image Position</Label>
+                                  <div className="flex gap-2 mt-2">
+                                    <Button
+                                      variant={postConfig.imagePosition === "above" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => updateConfig("imagePosition", "above")}
+                                      className="flex-1"
+                                    >
+                                      <ArrowUp className="h-4 w-4 mr-2" />
+                                      Above Text
+                                    </Button>
+                                    <Button
+                                      variant={postConfig.imagePosition === "below" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => updateConfig("imagePosition", "below")}
+                                      className="flex-1"
+                                    >
+                                      <ArrowDown className="h-4 w-4 mr-2" />
+                                      Below Text
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Code Block Section */}
+                      {postConfig.showCodeBlock && (
+                        <div className="space-y-4 animate-in fade-in duration-500">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="codeBlock" className="text-sm font-medium">
+                              Code Block
+                            </Label>
+                            {postConfig.codeBlock && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => updateConfig("codeBlock", "")}
+                                className="hover:bg-red-50 hover:text-red-600"
+                              >
+                                <X className="h-4 w-4 mr-2" /> Clear
+                              </Button>
+                            )}
                           </div>
 
                           <div className="space-y-3">
-                            <div>
-                              <Label className="text-sm font-medium">Image Size</Label>
-                              <div className="flex items-center gap-4 mt-2">
-                                <Slider
-                                  min={100}
-                                  max={400}
-                                  step={10}
-                                  value={[postConfig.contentImageSize]}
-                                  onValueChange={(value) => updateConfig("contentImageSize", value[0])}
-                                  className="flex-1"
-                                />
-                                <span className="w-16 text-center text-sm font-mono">
-                                  {postConfig.contentImageSize}px
-                                </span>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground">Language</Label>
+                                <Select
+                                  value={postConfig.codeLanguage}
+                                  onValueChange={(value) => updateConfig("codeLanguage", value)}
+                                >
+                                  <SelectTrigger className="h-8">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="javascript">JavaScript</SelectItem>
+                                    <SelectItem value="typescript">TypeScript</SelectItem>
+                                    <SelectItem value="python">Python</SelectItem>
+                                    <SelectItem value="java">Java</SelectItem>
+                                    <SelectItem value="cpp">C++</SelectItem>
+                                    <SelectItem value="html">HTML</SelectItem>
+                                    <SelectItem value="css">CSS</SelectItem>
+                                    <SelectItem value="sql">SQL</SelectItem>
+                                    <SelectItem value="bash">Bash</SelectItem>
+                                    <SelectItem value="json">JSON</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label className="text-xs font-medium text-muted-foreground">Theme</Label>
+                                <Select
+                                  value={postConfig.codeTheme}
+                                  onValueChange={(value) => updateConfig("codeTheme", value)}
+                                >
+                                  <SelectTrigger className="h-8">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="light">Light</SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </div>
                             </div>
 
-                            <div>
-                              <Label className="text-sm font-medium">Image Position</Label>
-                              <div className="flex gap-2 mt-2">
-                                <Button
-                                  variant={postConfig.imagePosition === "above" ? "default" : "outline"}
-                                  size="sm"
-                                  onClick={() => updateConfig("imagePosition", "above")}
-                                  className="flex-1"
-                                >
-                                  <ArrowUp className="h-4 w-4 mr-2" />
-                                  Above Text
-                                </Button>
-                                <Button
-                                  variant={postConfig.imagePosition === "below" ? "default" : "outline"}
-                                  size="sm"
-                                  onClick={() => updateConfig("imagePosition", "below")}
-                                  className="flex-1"
-                                >
-                                  <ArrowDown className="h-4 w-4 mr-2" />
-                                  Below Text
-                                </Button>
+                            <Textarea
+                              id="codeBlock"
+                              value={postConfig.codeBlock}
+                              onChange={(e) => updateConfig("codeBlock", e.target.value)}
+                              placeholder={`// Enter your ${postConfig.codeLanguage} code here
+function example() {
+  console.log("Hello, World!");
+}`}
+                              className="h-32 resize-none font-mono text-sm"
+                            />
+
+                            {postConfig.codeBlock && (
+                              <div className="space-y-3">
+                                <div>
+                                  <Label className="text-sm font-medium">Code Position</Label>
+                                  <div className="flex gap-2 mt-2">
+                                    <Button
+                                      variant={postConfig.codePosition === "above" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => updateConfig("codePosition", "above")}
+                                      className="flex-1"
+                                    >
+                                      <ArrowUp className="h-4 w-4 mr-2" />
+                                      Above Text
+                                    </Button>
+                                    <Button
+                                      variant={postConfig.codePosition === "below" ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => updateConfig("codePosition", "below")}
+                                      className="flex-1"
+                                    >
+                                      <ArrowDown className="h-4 w-4 mr-2" />
+                                      Below Text
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                <div className="p-3 rounded-lg border bg-muted/30">
+                                  <p className="text-xs text-muted-foreground mb-2">Preview:</p>
+                                  <div
+                                    className={`p-3 rounded text-xs font-mono overflow-x-auto ${
+                                      postConfig.codeTheme === "dark"
+                                        ? "bg-gray-900 text-gray-100"
+                                        : "bg-gray-100 text-gray-900"
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2 mb-2 text-xs opacity-70">
+                                      <div className="flex gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                      </div>
+                                      <span>{postConfig.codeLanguage}</span>
+                                    </div>
+                                    <pre className="whitespace-pre-wrap">{postConfig.codeBlock}</pre>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
+                            )}
                           </div>
                         </div>
                       )}
@@ -507,7 +735,7 @@ export default function Home() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="backgroundImage" className="text-sm font-medium">
-                          Background Image (Optional)
+                          Background Image
                         </Label>
                         {postConfig.backgroundImage && (
                           <Button
@@ -520,13 +748,25 @@ export default function Home() {
                           </Button>
                         )}
                       </div>
-                      <Input
-                        id="backgroundImage"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(e, "background")}
-                        className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                      />
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          id="backgroundImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e, "background")}
+                          className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                        />
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowAIBackgroundGenerator(true)}
+                          className="hover:bg-purple-50 hover:border-purple-300"
+                        >
+                          <Bot className="h-4 w-4 mr-2" />
+                          Generate with AI
+                        </Button>
+                      </div>
+
                       {postConfig.backgroundImage && (
                         <div className="relative w-full h-40 bg-muted rounded-lg overflow-hidden animate-in fade-in duration-500">
                           <Image
@@ -574,7 +814,7 @@ export default function Home() {
                             src={postConfig.profileImage || "/placeholder.svg"}
                             alt="Profile preview"
                             fill
-                            className="object-cover"
+                            className="object-cover w-full h-full"
                           />
                         </div>
                         <span className="text-sm text-muted-foreground">Profile picture preview</span>
@@ -625,6 +865,30 @@ export default function Home() {
               }}
             >
               <div className="flex-1 flex flex-col items-center justify-center space-y-4">
+                {/* Code Block Above */}
+                {postConfig.codePosition === "above" && postConfig.showCodeBlock && postConfig.codeBlock && (
+                  <div className="w-full max-w-[85%] animate-in fade-in duration-500">
+                    <div
+                      className={`p-4 rounded-lg text-xs font-mono overflow-x-auto ${
+                        postConfig.codeTheme === "dark"
+                          ? "bg-gray-900 text-gray-100 border border-gray-700"
+                          : "bg-gray-100 text-gray-900 border border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-3 text-xs opacity-70">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                          <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span>{postConfig.codeLanguage}</span>
+                      </div>
+                      <pre className="whitespace-pre-wrap text-xs leading-relaxed">{postConfig.codeBlock}</pre>
+                    </div>
+                  </div>
+                )}
+
+                {/* Image Above */}
                 {postConfig.imagePosition === "above" && postConfig.showContentImage && postConfig.contentImage && (
                   <div
                     className="animate-in fade-in duration-500"
@@ -650,6 +914,7 @@ export default function Home() {
                   {postConfig.text}
                 </div>
 
+                {/* Image Below */}
                 {postConfig.imagePosition === "below" && postConfig.showContentImage && postConfig.contentImage && (
                   <div
                     className="animate-in fade-in duration-500"
@@ -661,6 +926,29 @@ export default function Home() {
                       style={{ maxHeight: `${postConfig.contentImageSize}px`, maxWidth: "100%" }}
                       className="object-contain"
                     />
+                  </div>
+                )}
+
+                {/* Code Block Below */}
+                {postConfig.codePosition === "below" && postConfig.showCodeBlock && postConfig.codeBlock && (
+                  <div className="w-full max-w-[85%] animate-in fade-in duration-500">
+                    <div
+                      className={`p-4 rounded-lg text-xs font-mono overflow-x-auto ${
+                        postConfig.codeTheme === "dark"
+                          ? "bg-gray-900 text-gray-100 border border-gray-700"
+                          : "bg-gray-100 text-gray-900 border border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-3 text-xs opacity-70">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                          <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span>{postConfig.codeLanguage}</span>
+                      </div>
+                      <pre className="whitespace-pre-wrap text-xs leading-relaxed">{postConfig.codeBlock}</pre>
+                    </div>
                   </div>
                 )}
               </div>
@@ -679,8 +967,8 @@ export default function Home() {
                   <Image
                     src={postConfig.profileImage || "/placeholder.svg"}
                     alt="Profile"
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -711,15 +999,15 @@ export default function Home() {
                     <li>Choose a template or start from scratch</li>
                     <li>Enter your main text content</li>
                     <li>Add emojis using the emoji picker</li>
-                    <li>Upload and position content images</li>
+                    <li>Upload images or generate them with AI</li>
                   </ol>
                 </div>
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Customization</h3>
+                  <h3 className="font-semibold text-lg">AI Image Generation</h3>
                   <ol className="list-decimal pl-5 space-y-2 text-sm">
-                    <li>Adjust text styling and colors</li>
-                    <li>Set background colors or images</li>
-                    <li>Configure your profile information</li>
+                    <li>Get a free Gemini API key from Google AI Studio</li>
+                    <li>Click "Generate with AI" for content or background</li>
+                    <li>Customize prompts or use auto-generated ones</li>
                     <li>Download your finished post</li>
                   </ol>
                 </div>
@@ -727,6 +1015,47 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Image Generator Modals */}
+        {showAIContentGenerator && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-4 border-b flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Generate Content Image</h3>
+                <Button variant="ghost" size="sm" onClick={() => setShowAIContentGenerator(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="p-4">
+                <AIImageGenerator
+                  type="content"
+                  textContent={postConfig.text}
+                  onImageGenerated={(imageUrl) => handleAIImageGenerated(imageUrl, "content")}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showAIBackgroundGenerator && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-4 border-b flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Generate Background Image</h3>
+                <Button variant="ghost" size="sm" onClick={() => setShowAIBackgroundGenerator(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="p-4">
+                <AIImageGenerator
+                  type="background"
+                  textContent={postConfig.text}
+                  onImageGenerated={(imageUrl) => handleAIImageGenerated(imageUrl, "background")}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )
