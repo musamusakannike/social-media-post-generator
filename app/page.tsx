@@ -44,6 +44,28 @@ const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-lg"></div>,
 })
 
+// Helper function to get the correct font family
+const getFontFamily = (fontName: string): string => {
+  const fontMap: { [key: string]: string } = {
+    Inter: "var(--font-inter), sans-serif",
+    Roboto: "var(--font-roboto), sans-serif",
+    "Open Sans": "var(--font-open-sans), sans-serif",
+    Poppins: "var(--font-poppins), sans-serif",
+    Montserrat: "var(--font-montserrat), sans-serif",
+    "Playfair Display": "var(--font-playfair), serif",
+    "Source Code Pro": "var(--font-source-code), monospace",
+    Nunito: "var(--font-nunito), sans-serif",
+    Lato: "var(--font-lato), sans-serif",
+    Raleway: "var(--font-raleway), sans-serif",
+    Arial: "Arial, sans-serif",
+    Georgia: "Georgia, serif",
+    Verdana: "Verdana, sans-serif",
+    "Times New Roman": '"Times New Roman", serif',
+    "Courier New": '"Courier New", monospace',
+  }
+  return fontMap[fontName] || "Inter, sans-serif"
+}
+
 export default function Home() {
   const [postConfig, setPostConfig] = useState({
     text: "15 Programming Tips You NEED to Know! 💻🚀",
@@ -649,10 +671,11 @@ function example() {
                                 <div className="p-3 rounded-lg border bg-muted/30 dark:bg-slate-800/30 dark:border-slate-700">
                                   <p className="text-xs text-muted-foreground mb-2">Preview:</p>
                                   <div
-                                    className={`p-2 lg:p-3 rounded text-xs font-mono overflow-x-auto ${postConfig.codeTheme === "dark"
+                                    className={`p-2 lg:p-3 rounded text-xs font-mono overflow-x-auto ${
+                                      postConfig.codeTheme === "dark"
                                         ? "bg-gray-900 text-gray-100"
                                         : "bg-gray-100 text-gray-900"
-                                      }`}
+                                    }`}
                                   >
                                     <div className="flex items-center gap-2 mb-2 text-xs opacity-70">
                                       <div className="flex gap-1">
@@ -698,9 +721,9 @@ function example() {
                       <div className="flex items-center gap-4 mt-2">
                         <Slider
                           id="fontSize"
-                          min={16}
-                          max={64}
-                          step={1}
+                          min={14}
+                          max={72}
+                          step={2}
                           value={[postConfig.fontSize]}
                           onValueChange={(value) => updateConfig("fontSize", value[0])}
                           className="flex-1"
@@ -721,8 +744,8 @@ function example() {
                       <div className="flex items-center gap-4 mt-2">
                         <Slider
                           id="threadFontSize"
-                          min={12}
-                          max={32}
+                          min={10}
+                          max={36}
                           step={1}
                           value={[postConfig.threadFontSize]}
                           onValueChange={(value) => updateConfig("threadFontSize", value[0])}
@@ -746,11 +769,21 @@ function example() {
                           <SelectValue placeholder="Select font" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Inter">Inter</SelectItem>
-                          <SelectItem value="Arial">Arial</SelectItem>
-                          <SelectItem value="Georgia">Georgia</SelectItem>
-                          <SelectItem value="Verdana">Verdana</SelectItem>
-                          <SelectItem value="monospace">Monospace</SelectItem>
+                          <SelectItem value="Inter">Inter (Modern Sans)</SelectItem>
+                          <SelectItem value="Roboto">Roboto (Clean Sans)</SelectItem>
+                          <SelectItem value="Open Sans">Open Sans (Friendly)</SelectItem>
+                          <SelectItem value="Poppins">Poppins (Rounded)</SelectItem>
+                          <SelectItem value="Montserrat">Montserrat (Geometric)</SelectItem>
+                          <SelectItem value="Nunito">Nunito (Soft)</SelectItem>
+                          <SelectItem value="Lato">Lato (Humanist)</SelectItem>
+                          <SelectItem value="Raleway">Raleway (Elegant)</SelectItem>
+                          <SelectItem value="Playfair Display">Playfair Display (Serif)</SelectItem>
+                          <SelectItem value="Source Code Pro">Source Code Pro (Mono)</SelectItem>
+                          <SelectItem value="Arial">Arial (System)</SelectItem>
+                          <SelectItem value="Georgia">Georgia (System Serif)</SelectItem>
+                          <SelectItem value="Verdana">Verdana (System Sans)</SelectItem>
+                          <SelectItem value="Times New Roman">Times New Roman (Classic)</SelectItem>
+                          <SelectItem value="Courier New">Courier New (System Mono)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -932,10 +965,11 @@ function example() {
                 {postConfig.codePosition === "above" && postConfig.showCodeBlock && postConfig.codeBlock && (
                   <div className="w-full max-w-[90%] animate-in fade-in duration-500">
                     <div
-                      className={`p-2 lg:p-4 rounded-lg text-xs font-mono overflow-x-auto ${postConfig.codeTheme === "dark"
+                      className={`p-2 lg:p-4 rounded-lg text-xs font-mono overflow-x-auto ${
+                        postConfig.codeTheme === "dark"
                           ? "bg-gray-900 text-gray-100 border border-gray-700"
                           : "bg-gray-100 text-gray-900 border border-gray-300"
-                        }`}
+                      }`}
                     >
                       <div className="flex items-center gap-2 mb-2 lg:mb-3 text-xs opacity-70">
                         <div className="flex gap-1">
@@ -968,9 +1002,10 @@ function example() {
                 <div
                   className="text-center max-w-[90%] transition-all duration-300 leading-tight"
                   style={{
-                    fontSize: `${Math.min(postConfig.fontSize, 28)}px`,
-                    fontFamily: postConfig.fontFamily,
+                    fontSize: `${Math.max(Math.min(postConfig.fontSize, 48), 16)}px`,
+                    fontFamily: getFontFamily(postConfig.fontFamily),
                     fontWeight: postConfig.fontWeight,
+                    lineHeight: postConfig.fontSize > 32 ? "1.1" : "1.2",
                   }}
                 >
                   {postConfig.text}
@@ -995,10 +1030,11 @@ function example() {
                 {postConfig.codePosition === "below" && postConfig.showCodeBlock && postConfig.codeBlock && (
                   <div className="w-full max-w-[90%] animate-in fade-in duration-500">
                     <div
-                      className={`p-2 lg:p-4 rounded-lg text-xs font-mono overflow-x-auto ${postConfig.codeTheme === "dark"
+                      className={`p-2 lg:p-4 rounded-lg text-xs font-mono overflow-x-auto ${
+                        postConfig.codeTheme === "dark"
                           ? "bg-gray-900 text-gray-100 border border-gray-700"
                           : "bg-gray-100 text-gray-900 border border-gray-300"
-                        }`}
+                      }`}
                     >
                       <div className="flex items-center gap-2 mb-2 lg:mb-3 text-xs opacity-70">
                         <div className="flex gap-1">
@@ -1017,7 +1053,11 @@ function example() {
               {postConfig.showThreadText && postConfig.threadText && (
                 <div
                   className="text-center mb-8 lg:mb-12 transition-all duration-300"
-                  style={{ fontSize: `${Math.min(postConfig.threadFontSize, 16)}px` }}
+                  style={{
+                    fontSize: `${Math.max(Math.min(postConfig.threadFontSize, 24), 12)}px`,
+                    fontFamily: getFontFamily(postConfig.fontFamily),
+                    fontWeight: postConfig.fontWeight,
+                  }}
                 >
                   {postConfig.threadText}
                 </div>
