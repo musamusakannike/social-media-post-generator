@@ -44,6 +44,9 @@ const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   loading: () => <div className="h-[350px] w-full bg-muted animate-pulse rounded-lg"></div>,
 })
 
+// Add TextAlign type
+type TextAlign = "left" | "center" | "right" | "justify"
+
 // Helper function to get the correct font family
 const getFontFamily = (fontName: string): string => {
   const fontMap: { [key: string]: string } = {
@@ -72,19 +75,30 @@ export default function Home() {
     threadText: "A thread 🧵",
     username: "@musa_codes",
     profileImage: "/placeholder.svg?height=100&width=100",
+    backgroundType: "solid", // 'solid' | 'linear' | 'radial'
     backgroundColor: "#000000",
     backgroundImage: "",
+    gradientColors: ["#000000", "#ffffff"], // for gradients
+    gradientAngle: 90, // for linear
+    gradientShape: "ellipse", // for radial
     textColor: "#ffffff",
-    fontSize: 32,
+    mainFontSize: 32,
+    mainFontFamily: "Inter",
+    mainFontWeight: "bold",
+    mainTextAlign: "center" as TextAlign,
     threadFontSize: 18,
-    fontFamily: "Inter",
-    fontWeight: "bold",
+    threadFontFamily: "Inter",
+    threadFontWeight: "bold",
+    threadTextAlign: "center" as TextAlign,
+    usernameFontSize: 18,
+    usernameFontFamily: "Inter",
+    usernameFontWeight: "bold",
+    usernameTextAlign: "left" as TextAlign,
     contentImage: "",
     contentImageSize: 200,
     imagePosition: "above", // "above" or "below"
     showContentImage: false,
     showThreadText: true,
-    // Add code block properties
     codeBlock: "",
     codeLanguage: "javascript",
     codePosition: "above", // "above" or "below"
@@ -702,6 +716,175 @@ function example() {
                 {/* Style Tab */}
                 <TabsContent value="style" className="space-y-4 lg:space-y-6 animate-in fade-in duration-500">
                   <div className="space-y-4 lg:space-y-6">
+                    {/* Main Text Settings */}
+                    <div className="p-3 lg:p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 rounded-lg border dark:border-slate-700 space-y-2">
+                      <Label className="text-base font-semibold">Main Text Style</Label>
+                      <div className="flex flex-wrap gap-4 items-end">
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Family</Label>
+                          <Select value={postConfig.mainFontFamily} onValueChange={v => updateConfig("mainFontFamily", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Font" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans</SelectItem>
+                              <SelectItem value="Poppins">Poppins</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat</SelectItem>
+                              <SelectItem value="Nunito">Nunito</SelectItem>
+                              <SelectItem value="Lato">Lato</SelectItem>
+                              <SelectItem value="Raleway">Raleway</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display</SelectItem>
+                              <SelectItem value="Source Code Pro">Source Code Pro</SelectItem>
+                              <SelectItem value="Arial">Arial</SelectItem>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Verdana">Verdana</SelectItem>
+                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                              <SelectItem value="Courier New">Courier New</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Size</Label>
+                          <Slider min={14} max={72} step={2} value={[postConfig.mainFontSize]} onValueChange={v => updateConfig("mainFontSize", v[0])} />
+                          <span className="font-mono text-xs">{postConfig.mainFontSize}px</span>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Font Weight</Label>
+                          <Select value={postConfig.mainFontWeight} onValueChange={v => updateConfig("mainFontWeight", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Weight" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="bold">Bold</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Text Align</Label>
+                          <Select value={postConfig.mainTextAlign} onValueChange={v => updateConfig("mainTextAlign", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Align" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="left">Left</SelectItem>
+                              <SelectItem value="center">Center</SelectItem>
+                              <SelectItem value="right">Right</SelectItem>
+                              <SelectItem value="justify">Justify</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Thread Text Settings */}
+                    <div className="p-3 lg:p-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-950/50 dark:to-green-950/50 rounded-lg border dark:border-slate-700 space-y-2">
+                      <Label className="text-base font-semibold">Thread Text Style</Label>
+                      <div className="flex flex-wrap gap-4 items-end">
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Family</Label>
+                          <Select value={postConfig.threadFontFamily} onValueChange={v => updateConfig("threadFontFamily", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Font" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans</SelectItem>
+                              <SelectItem value="Poppins">Poppins</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat</SelectItem>
+                              <SelectItem value="Nunito">Nunito</SelectItem>
+                              <SelectItem value="Lato">Lato</SelectItem>
+                              <SelectItem value="Raleway">Raleway</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display</SelectItem>
+                              <SelectItem value="Source Code Pro">Source Code Pro</SelectItem>
+                              <SelectItem value="Arial">Arial</SelectItem>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Verdana">Verdana</SelectItem>
+                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                              <SelectItem value="Courier New">Courier New</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Size</Label>
+                          <Slider min={10} max={36} step={1} value={[postConfig.threadFontSize]} onValueChange={v => updateConfig("threadFontSize", v[0])} />
+                          <span className="font-mono text-xs">{postConfig.threadFontSize}px</span>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Font Weight</Label>
+                          <Select value={postConfig.threadFontWeight} onValueChange={v => updateConfig("threadFontWeight", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Weight" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="bold">Bold</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Text Align</Label>
+                          <Select value={postConfig.threadTextAlign} onValueChange={v => updateConfig("threadTextAlign", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Align" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="left">Left</SelectItem>
+                              <SelectItem value="center">Center</SelectItem>
+                              <SelectItem value="right">Right</SelectItem>
+                              <SelectItem value="justify">Justify</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Username Settings */}
+                    <div className="p-3 lg:p-4 bg-gradient-to-r from-yellow-50 to-pink-50 dark:from-yellow-950/50 dark:to-pink-950/50 rounded-lg border dark:border-slate-700 space-y-2">
+                      <Label className="text-base font-semibold">Username Style</Label>
+                      <div className="flex flex-wrap gap-4 items-end">
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Family</Label>
+                          <Select value={postConfig.usernameFontFamily} onValueChange={v => updateConfig("usernameFontFamily", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Font" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Inter">Inter</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans</SelectItem>
+                              <SelectItem value="Poppins">Poppins</SelectItem>
+                              <SelectItem value="Montserrat">Montserrat</SelectItem>
+                              <SelectItem value="Nunito">Nunito</SelectItem>
+                              <SelectItem value="Lato">Lato</SelectItem>
+                              <SelectItem value="Raleway">Raleway</SelectItem>
+                              <SelectItem value="Playfair Display">Playfair Display</SelectItem>
+                              <SelectItem value="Source Code Pro">Source Code Pro</SelectItem>
+                              <SelectItem value="Arial">Arial</SelectItem>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Verdana">Verdana</SelectItem>
+                              <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                              <SelectItem value="Courier New">Courier New</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[120px]">
+                          <Label>Font Size</Label>
+                          <Slider min={10} max={36} step={1} value={[postConfig.usernameFontSize]} onValueChange={v => updateConfig("usernameFontSize", v[0])} />
+                          <span className="font-mono text-xs">{postConfig.usernameFontSize}px</span>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Font Weight</Label>
+                          <Select value={postConfig.usernameFontWeight} onValueChange={v => updateConfig("usernameFontWeight", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Weight" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="normal">Normal</SelectItem>
+                              <SelectItem value="bold">Bold</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1 min-w-[100px]">
+                          <Label>Text Align</Label>
+                          <Select value={postConfig.usernameTextAlign} onValueChange={v => updateConfig("usernameTextAlign", v)}>
+                            <SelectTrigger className="mt-1"><SelectValue placeholder="Align" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="left">Left</SelectItem>
+                              <SelectItem value="center">Center</SelectItem>
+                              <SelectItem value="right">Right</SelectItem>
+                              <SelectItem value="justify">Justify</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Text Color (applies to main text) */}
                     <div className="p-3 lg:p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50 rounded-lg border dark:border-slate-700">
                       <Label htmlFor="textColor" className="text-sm font-medium text-slate-900 dark:text-slate-100">
                         Text Color
@@ -713,98 +896,6 @@ function example() {
                         />
                       </div>
                     </div>
-
-                    <div>
-                      <Label htmlFor="fontSize" className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        Main Text Size
-                      </Label>
-                      <div className="flex items-center gap-4 mt-2">
-                        <Slider
-                          id="fontSize"
-                          min={14}
-                          max={72}
-                          step={2}
-                          value={[postConfig.fontSize]}
-                          onValueChange={(value) => updateConfig("fontSize", value[0])}
-                          className="flex-1"
-                        />
-                        <span className="w-12 lg:w-16 text-center font-mono text-xs lg:text-sm text-slate-900 dark:text-slate-100">
-                          {postConfig.fontSize}px
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label
-                        htmlFor="threadFontSize"
-                        className="text-sm font-medium text-slate-900 dark:text-slate-100"
-                      >
-                        Thread Text Size
-                      </Label>
-                      <div className="flex items-center gap-4 mt-2">
-                        <Slider
-                          id="threadFontSize"
-                          min={10}
-                          max={36}
-                          step={1}
-                          value={[postConfig.threadFontSize]}
-                          onValueChange={(value) => updateConfig("threadFontSize", value[0])}
-                          className="flex-1"
-                        />
-                        <span className="w-12 lg:w-16 text-center font-mono text-xs lg:text-sm text-slate-900 dark:text-slate-100">
-                          {postConfig.threadFontSize}px
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fontFamily" className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        Font Family
-                      </Label>
-                      <Select
-                        value={postConfig.fontFamily}
-                        onValueChange={(value) => updateConfig("fontFamily", value)}
-                      >
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Select font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Inter">Inter (Modern Sans)</SelectItem>
-                          <SelectItem value="Roboto">Roboto (Clean Sans)</SelectItem>
-                          <SelectItem value="Open Sans">Open Sans (Friendly)</SelectItem>
-                          <SelectItem value="Poppins">Poppins (Rounded)</SelectItem>
-                          <SelectItem value="Montserrat">Montserrat (Geometric)</SelectItem>
-                          <SelectItem value="Nunito">Nunito (Soft)</SelectItem>
-                          <SelectItem value="Lato">Lato (Humanist)</SelectItem>
-                          <SelectItem value="Raleway">Raleway (Elegant)</SelectItem>
-                          <SelectItem value="Playfair Display">Playfair Display (Serif)</SelectItem>
-                          <SelectItem value="Source Code Pro">Source Code Pro (Mono)</SelectItem>
-                          <SelectItem value="Arial">Arial (System)</SelectItem>
-                          <SelectItem value="Georgia">Georgia (System Serif)</SelectItem>
-                          <SelectItem value="Verdana">Verdana (System Sans)</SelectItem>
-                          <SelectItem value="Times New Roman">Times New Roman (Classic)</SelectItem>
-                          <SelectItem value="Courier New">Courier New (System Mono)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fontWeight" className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        Font Weight
-                      </Label>
-                      <Select
-                        value={postConfig.fontWeight}
-                        onValueChange={(value) => updateConfig("fontWeight", value)}
-                      >
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Select weight" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="normal">Normal</SelectItem>
-                          <SelectItem value="bold">Bold</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
                 </TabsContent>
 
@@ -812,69 +903,80 @@ function example() {
                 <TabsContent value="background" className="space-y-4 lg:space-y-6 animate-in fade-in duration-500">
                   <div className="space-y-4 lg:space-y-6">
                     <div className="p-3 lg:p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/50 dark:to-blue-950/50 rounded-lg border dark:border-slate-700">
-                      <Label
-                        htmlFor="backgroundColor"
-                        className="text-sm font-medium text-slate-900 dark:text-slate-100"
-                      >
-                        Background Color
+                      <Label className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        Background Type
                       </Label>
-                      <div className="mt-2">
-                        <ColorPicker
-                          color={postConfig.backgroundColor}
-                          onChange={(color) => updateConfig("backgroundColor", color)}
-                        />
-                      </div>
+                      <Select value={postConfig.backgroundType} onValueChange={v => updateConfig("backgroundType", v)}>
+                        <SelectTrigger className="mt-2"><SelectValue placeholder="Type" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="solid">Solid Color</SelectItem>
+                          <SelectItem value="linear">Linear Gradient</SelectItem>
+                          <SelectItem value="radial">Radial Gradient</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label
-                          htmlFor="backgroundImage"
-                          className="text-sm font-medium text-slate-900 dark:text-slate-100"
-                        >
-                          Background Image
+                    {/* Solid Color Picker */}
+                    {postConfig.backgroundType === "solid" && (
+                      <div className="p-3 lg:p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/50 dark:to-blue-950/50 rounded-lg border dark:border-slate-700">
+                        <Label htmlFor="backgroundColor" className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                          Background Color
                         </Label>
-                        {postConfig.backgroundImage && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={clearBackgroundImage}
-                            className="hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600"
-                          >
-                            <X className="h-4 w-4 mr-2" /> Clear
-                          </Button>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <Input
-                          id="backgroundImage"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(e, "background")}
-                          className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 text-xs lg:text-sm"
-                        />
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowAIBackgroundGenerator(true)}
-                          className="hover:bg-purple-50 dark:hover:bg-purple-950 hover:border-purple-300 text-xs lg:text-sm"
-                        >
-                          <Bot className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
-                          Generate with AI
-                        </Button>
-                      </div>
-
-                      {postConfig.backgroundImage && (
-                        <div className="relative w-full h-32 lg:h-40 bg-muted dark:bg-slate-800 rounded-lg overflow-hidden animate-in fade-in duration-500">
-                          <Image
-                            src={postConfig.backgroundImage || "/placeholder.svg"}
-                            alt="Background preview"
-                            fill
-                            className="object-cover"
+                        <div className="mt-2">
+                          <ColorPicker
+                            color={postConfig.backgroundColor}
+                            onChange={(color) => updateConfig("backgroundColor", color)}
                           />
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    {/* Gradient Controls */}
+                    {(postConfig.backgroundType === "linear" || postConfig.backgroundType === "radial") && (
+                      <div className="p-3 lg:p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/50 dark:to-blue-950/50 rounded-lg border dark:border-slate-700 space-y-4">
+                        <Label className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                          Gradient Colors
+                        </Label>
+                        <div className="flex gap-2 flex-wrap items-center">
+                          {postConfig.gradientColors.map((color, idx) => (
+                            <div key={idx} className="flex items-center gap-1">
+                              <ColorPicker color={color} onChange={c => {
+                                const newColors = [...postConfig.gradientColors]
+                                newColors[idx] = c
+                                updateConfig("gradientColors", newColors)
+                              }} />
+                              {postConfig.gradientColors.length > 2 && (
+                                <Button size="icon" variant="ghost" onClick={() => {
+                                  const newColors = postConfig.gradientColors.filter((_, i) => i !== idx)
+                                  updateConfig("gradientColors", newColors)
+                                }}><X className="w-4 h-4" /></Button>
+                              )}
+                            </div>
+                          ))}
+                          {postConfig.gradientColors.length < 5 && (
+                            <Button size="sm" variant="outline" onClick={() => updateConfig("gradientColors", [...postConfig.gradientColors, "#ffffff"])}>+
+                            </Button>
+                          )}
+                        </div>
+                        {postConfig.backgroundType === "linear" && (
+                          <div>
+                            <Label>Angle</Label>
+                            <Slider min={0} max={360} step={1} value={[postConfig.gradientAngle]} onValueChange={v => updateConfig("gradientAngle", v[0])} />
+                            <span className="font-mono text-xs">{postConfig.gradientAngle}&deg;</span>
+                          </div>
+                        )}
+                        {postConfig.backgroundType === "radial" && (
+                          <div>
+                            <Label>Shape</Label>
+                            <Select value={postConfig.gradientShape} onValueChange={v => updateConfig("gradientShape", v)}>
+                              <SelectTrigger className="mt-1"><SelectValue placeholder="Shape" /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="ellipse">Ellipse</SelectItem>
+                                <SelectItem value="circle">Circle</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
 
@@ -953,10 +1055,17 @@ function example() {
               ref={imageRef}
               className="w-full aspect-square p-4 lg:p-6 flex flex-col justify-between relative shadow-2xl rounded-lg overflow-hidden transition-all duration-500 hover:shadow-3xl max-w-[400px] lg:max-w-[500px]"
               style={{
-                backgroundColor: postConfig.backgroundColor,
-                backgroundImage: postConfig.backgroundImage ? `url(${postConfig.backgroundImage})` : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                background:
+                  postConfig.backgroundType === "solid"
+                    ? postConfig.backgroundColor
+                    : postConfig.backgroundType === "linear"
+                    ? `linear-gradient(${postConfig.gradientAngle}deg, ${postConfig.gradientColors.join(", ")})`
+                    : postConfig.backgroundType === "radial"
+                    ? `radial-gradient(${postConfig.gradientShape}, ${postConfig.gradientColors.join(", ")})`
+                    : postConfig.backgroundColor,
+                backgroundImage: postConfig.backgroundImage ? `url(${postConfig.backgroundImage})` : undefined,
+                backgroundSize: postConfig.backgroundImage ? "cover" : undefined,
+                backgroundPosition: postConfig.backgroundImage ? "center" : undefined,
                 color: postConfig.textColor,
               }}
             >
@@ -1000,12 +1109,14 @@ function example() {
                 )}
 
                 <div
-                  className="text-center max-w-[90%] transition-all duration-300 leading-tight"
+                  className="max-w-[90%] transition-all duration-300 leading-tight"
                   style={{
-                    fontSize: `${Math.max(Math.min(postConfig.fontSize, 48), 16)}px`,
-                    fontFamily: getFontFamily(postConfig.fontFamily),
-                    fontWeight: postConfig.fontWeight,
-                    lineHeight: postConfig.fontSize > 32 ? "1.1" : "1.2",
+                    fontSize: `${Math.max(Math.min(postConfig.mainFontSize, 48), 16)}px`,
+                    fontFamily: getFontFamily(postConfig.mainFontFamily),
+                    fontWeight: postConfig.mainFontWeight,
+                    lineHeight: postConfig.mainFontSize > 32 ? "1.1" : "1.2",
+                    color: postConfig.textColor,
+                    textAlign: postConfig.mainTextAlign,
                   }}
                 >
                   {postConfig.text}
@@ -1052,11 +1163,12 @@ function example() {
 
               {postConfig.showThreadText && postConfig.threadText && (
                 <div
-                  className="text-center mb-8 lg:mb-12 transition-all duration-300"
+                  className="mb-8 lg:mb-12 transition-all duration-300"
                   style={{
                     fontSize: `${Math.max(Math.min(postConfig.threadFontSize, 24), 12)}px`,
-                    fontFamily: getFontFamily(postConfig.fontFamily),
-                    fontWeight: postConfig.fontWeight,
+                    fontFamily: getFontFamily(postConfig.threadFontFamily),
+                    fontWeight: postConfig.threadFontWeight,
+                    textAlign: postConfig.threadTextAlign,
                   }}
                 >
                   {postConfig.threadText}
@@ -1073,7 +1185,17 @@ function example() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <span className="text-sm lg:text-lg">{postConfig.username}</span>
+                <span
+                  className="text-sm lg:text-lg"
+                  style={{
+                    fontSize: `${Math.max(Math.min(postConfig.usernameFontSize, 32), 10)}px`,
+                    fontFamily: getFontFamily(postConfig.usernameFontFamily),
+                    fontWeight: postConfig.usernameFontWeight,
+                    textAlign: postConfig.usernameTextAlign,
+                  }}
+                >
+                  {postConfig.username}
+                </span>
               </div>
 
               <div className="absolute bottom-4 lg:bottom-6 right-4 lg:right-6">
